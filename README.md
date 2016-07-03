@@ -33,7 +33,7 @@ script to support Catch as well.
   - The script will log to the console when fixtures have to be updated.
 * You will have to configure the `main` entry point as per the testing framework manually.
 * Google doesn't support "info" messages, so you must include `GTestUtil.hpp` (adapted from 
-  [this stackoverflow post](http://stackoverflow.com/a/29155677/535103)) alongside your tests.  
+  [this stackoverflow post](http://stackoverflow.com/a/29155677/535103)) alongside your tests.
   This utility provides a `COUT` stream handler, which is used to replace `BOOST_TEST_MESSAGE`.
   
 
