@@ -20,7 +20,7 @@ script to support Catch as well.
   [Google C++ Testing Framework](https://github.com/google/googletest)
   - [Boost.Test](http://www.boost.org/doc/libs/1_61_0/libs/test/doc/html/index.html) => 
   [Catch](https://github.com/philsquared/Catch)
-* There is some support clever matches, but it's probable that comments/strings containing e.g.
+* There is some support for clever matches, but it's probable that comments/strings containing e.g.
   brackets, may confuse the parsing.
 * Fixtures are annoying to convert.  If you use fixtures you will get compilation errors - there is
   some manual tidying that has to be done after using the script.
@@ -37,7 +37,7 @@ script to support Catch as well.
 ##Command line
 ```
 $ ./test2test --help
-usage: testconvert [-h] -i FROM -o TO [-f GLOB] [-p PREFIX] [-s SUFFIX] [-d]
+usage: test2test [-h] -i FROM -o TO [-f GLOB] [-p PREFIX] [-s SUFFIX] [-d]
 
 Convert between c++ testing frameworks.
 
