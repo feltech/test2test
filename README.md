@@ -59,3 +59,6 @@ optional arguments:
 ```
 $ ./test2test -i boost -o catch -f "../Felt/src/tests/test_*.cpp"
 ```
+
+##Licence
+Released under GPL 3: http://www.gnu.org/licenses/gpl-3.0.en.html
