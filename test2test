@@ -1,0 +1,102 @@
+#!/usr/bin/python3
+
+import argparse
+import glob
+import os
+import shutil
+from datetime import datetime
+
+from functools import reduce
+
+import boost_to_catch
+from common import DELETE_ME_TOKEN
+import boost_to_google
+
+if __name__ == "__main__":
+	supportedConversions = [("boost", "google"), ("boost", "catch")]
+
+	parser = argparse.ArgumentParser(description="Convert between c++ testing frameworks.")
+
+	parser.add_argument(
+		"-i", "--from", dest="input",
+		help="Test type from", metavar="FROM", required=True
+	)
+
+	parser.add_argument(
+		"-o", "--to", dest="output",
+		help="Test type to", metavar="TO", required=True
+	)
+
+	parser.add_argument(
+		"-f", "--glob", type=str, help="File path glob for files to convert (default *.cpp)",
+		metavar="GLOB", default="*.cpp"
+	)
+
+	parser.add_argument(
+		"-p", "--prefix", type=str, help="Prefix for generated files (default [TO])",
+		default="[TO]"
+	)
+
+	parser.add_argument(
+		"-s", "--suffix", type=str, help="Suffix for generated files", default=""
+	)
+
+	parser.add_argument(
+		"-d", "--dry-run", dest="dryrun", help="Log to console rather than writing files",
+		action="store_true",
+	)
+
+	args = parser.parse_args()
+
+	conversion = (args.input, args.output)
+
+	if conversion not in supportedConversions:
+		parser.error(
+			"Supported conversions are: %s"
+			% ", ".join([("%s %s" % (supp[0], supp[1])) for supp in supportedConversions])
+		)
+
+	if args.prefix == "[TO]":
+		args.prefix = args.output
+
+	fileNames = glob.glob(args.glob)
+
+	for fileName in fileNames:
+		print("Processing %s:1" % os.path.abspath(fileName))
+		with open(fileName) as file:
+			lines = file.readlines()
+
+		folderPart, filePart = os.path.split(fileName)
+		namePart, extensionPart = os.path.splitext(filePart)
+		newFilePart = "%s%s%s%s" % (args.prefix, namePart, args.suffix, extensionPart)
+		newFileName = os.path.join(folderPart, newFilePart)
+
+		if fileName == newFileName:
+			shutil.copyfile(
+				fileName,
+				os.path.join(
+					folderPart, "%s.old.%s%s" % (
+						namePart, datetime.now().strftime("%Y-%m-%dT%H%M%S"), extensionPart
+					)
+				)
+			)
+
+		# Process
+		if conversion == ("boost", "google"):
+			boost_to_google.convert(lines, newFileName)
+
+		elif conversion == ("boost", "catch"):
+			boost_to_catch.convert(lines)
+
+		lines = [line for line in lines if line != DELETE_ME_TOKEN]
+
+		if args.dryrun:
+			print("".join(lines))
+		else:
+			with open(newFileName, "w") as file:
+				file.writelines(lines)
+
+		print(
+			"  created %s:%s"
+			% (os.path.abspath(newFileName), len("\n".join(lines).split("\n")))
+		)
